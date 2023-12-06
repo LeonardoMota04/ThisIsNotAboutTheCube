@@ -53,11 +53,11 @@ class ViewController: UIViewController {
             cubeInfoOverlayView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100),
             cubeInfoOverlayView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
-        
+        //cubeInfoOverlayView.updateText("LEO")
         // Atualizar texto na CubeInfoOverlayView
-        timer = Timer.scheduledTimer(withTimeInterval: 0.15, repeats: true) { [weak self] _ in
-            self?.updateTextWithTimer()
-        }
+//        timer = Timer.scheduledTimer(withTimeInterval: 0.15, repeats: true) { [weak self] _ in
+//            self?.updateTextWithTimer()
+//        }
         // Configurar TITULO ============================================================
 
  
@@ -115,21 +115,21 @@ class ViewController: UIViewController {
             self.circleView.layer.cornerRadius = 0
         }
 
-        cubeInfoOverlayView.updateText("TEXTO NOVO")
+        //cubeInfoOverlayView.updateText("TEXTO NOVO")
     }
    
     
-    func updateTextWithTimer() {
-        if index < self.strTITLE.count {
-            let letter = strTITLE[strTITLE.startIndex...strTITLE.index(strTITLE.startIndex, offsetBy: index)]
-            cubeInfoOverlayView.updateText("\(letter)")
-            index += 1
-        } else {
-            // Se todas as letras foram exibidas, invalidar o timer para parar as atualizações
-            timer?.invalidate()
-            timer = nil
-        }
-    }
+//    func updateTextWithTimer() {
+//        if index < self.strTITLE.count {
+//            let letter = strTITLE[strTITLE.startIndex...strTITLE.index(strTITLE.startIndex, offsetBy: index)]
+//            cubeInfoOverlayView.updateText("\(letter)")
+//            index += 1
+//        } else {
+//            // Se todas as letras foram exibidas, invalidar o timer para parar as atualizações
+//            timer?.invalidate()
+//            timer = nil
+//        }
+//    }
     
     // gesture handlers
     @objc
