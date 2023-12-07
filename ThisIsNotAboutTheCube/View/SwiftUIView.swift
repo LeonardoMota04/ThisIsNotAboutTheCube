@@ -8,7 +8,7 @@
 import SwiftUI
 import SceneKit
 
-struct MyView: UIViewControllerRepresentable {
+struct CubeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> ViewController {
         let vc = ViewController()
         return vc
@@ -36,7 +36,7 @@ struct SwiftUIView: View {
                 .foregroundStyle(.red)
                 .offset(x: dragOffset, y: 0)
             //if showCube {
-                MyView().ignoresSafeArea()
+                CubeView().ignoresSafeArea()
             //}
             
                 
