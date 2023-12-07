@@ -12,10 +12,8 @@
 		264209B52B2008520073A984 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 264209B42B2008520073A984 /* Preview Assets.xcassets */; };
 		265EE2902B200EB5009ADC21 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265EE28C2B200EB5009ADC21 /* GameViewController.swift */; };
 		265EE2912B200EB5009ADC21 /* CubeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265EE28D2B200EB5009ADC21 /* CubeModel.swift */; };
-		265EE2922B200EB5009ADC21 /* InfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265EE28E2B200EB5009ADC21 /* InfoView.swift */; };
 		265EE2932B200EB5009ADC21 /* SwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265EE28F2B200EB5009ADC21 /* SwiftUIView.swift */; };
 		265EE2962B200EBA009ADC21 /* joystix monospace.otf in Resources */ = {isa = PBXBuildFile; fileRef = 265EE2952B200EBA009ADC21 /* joystix monospace.otf */; };
-		265EE29C2B2015A9009ADC21 /* PageInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265EE29B2B2015A9009ADC21 /* PageInfoModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,11 +23,9 @@
 		264209B42B2008520073A984 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		265EE28C2B200EB5009ADC21 /* GameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		265EE28D2B200EB5009ADC21 /* CubeModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CubeModel.swift; sourceTree = "<group>"; };
-		265EE28E2B200EB5009ADC21 /* InfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfoView.swift; sourceTree = "<group>"; };
 		265EE28F2B200EB5009ADC21 /* SwiftUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftUIView.swift; sourceTree = "<group>"; };
 		265EE2952B200EBA009ADC21 /* joystix monospace.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "joystix monospace.otf"; sourceTree = "<group>"; };
 		265EE2972B200ED6009ADC21 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		265EE29B2B2015A9009ADC21 /* PageInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageInfoModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,7 +90,6 @@
 			isa = PBXGroup;
 			children = (
 				265EE28D2B200EB5009ADC21 /* CubeModel.swift */,
-				265EE29B2B2015A9009ADC21 /* PageInfoModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -102,7 +97,6 @@
 		265EE2992B200EE6009ADC21 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				265EE28E2B200EB5009ADC21 /* InfoView.swift */,
 				265EE28F2B200EB5009ADC21 /* SwiftUIView.swift */,
 			);
 			path = View;
@@ -187,11 +181,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				265EE29C2B2015A9009ADC21 /* PageInfoModel.swift in Sources */,
 				265EE2902B200EB5009ADC21 /* GameViewController.swift in Sources */,
 				265EE2932B200EB5009ADC21 /* SwiftUIView.swift in Sources */,
 				265EE2912B200EB5009ADC21 /* CubeModel.swift in Sources */,
-				265EE2922B200EB5009ADC21 /* InfoView.swift in Sources */,
 				264209AE2B2008500073A984 /* ThisIsNotAboutTheCubeApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

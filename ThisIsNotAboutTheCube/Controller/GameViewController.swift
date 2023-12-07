@@ -16,16 +16,9 @@ class ViewController: UIViewController {
     var beganPanNode: SCNNode!
     var rotationAxis:SCNVector3!
     
-    var shouldFloat = true
-    var strTITLE = "THIS IS NOT ABOUT\nTHE CUBE"
-    var timer: Timer?
-    var index: Int = 0
-    
-    var circleView: UIView!
-    
     var animationLock = false
     
-    var cubeInfoOverlayView: CubeInfoOverlayView!
+    var shouldFloat = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,22 +38,7 @@ class ViewController: UIViewController {
         self.view.addSubview(sceneView)
         rootNode = sceneView.scene!.rootNode
         
-        // Configurar TITULO ============================================================
-        cubeInfoOverlayView = CubeInfoOverlayView()
-        view.addSubview(cubeInfoOverlayView)
-        cubeInfoOverlayView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            cubeInfoOverlayView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100),
-            cubeInfoOverlayView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-        ])
-        //cubeInfoOverlayView.updateText("LEO")
-        // Atualizar texto na CubeInfoOverlayView
-//        timer = Timer.scheduledTimer(withTimeInterval: 0.15, repeats: true) { [weak self] _ in
-//            self?.updateTextWithTimer()
-//        }
-        // Configurar TITULO ============================================================
-
- 
+       
         // criando CUBO e adicionando na cena
         rubiksCube = RubiksCube()
         rootNode.addChildNode(rubiksCube)
@@ -90,46 +68,10 @@ class ViewController: UIViewController {
         // gesture recognizers
         //let rotationRecognizer = UIRotationGestureRecognizer(target: self, action: #selector(sceneRotated(_:)))
         let panRecognizer = UIPanGestureRecognizer(target: self, action: #selector(sceneTouched(_:)))
-        
-        // CIRCULO
-//        circleView = UIView()
-//        circleView.backgroundColor = UIColor.red
-//        circleView.frame = CGRect(x: Int(screenWidth/2) - 40, y: Int(screenHeight/2) - 40, width: 80, height: 80)
-//        circleView.layer.cornerRadius = 40
-//        circleView.layer.zPosition = 0
-//        circleView.alpha = 1.0
-//        view.addSubview(circleView)
-//        let swipeLeftGesture = UISwipeGestureRecognizer(target: self, action: #selector(swipeLeft(_:)))
-//        swipeLeftGesture.direction = .left
-        
+
         sceneView.gestureRecognizers = [panRecognizer]
     }
     
-    
-    @objc func swipeLeft(_ gesture: UISwipeGestureRecognizer) {
-        UIView.animate(withDuration: 1.5) {
-            //self.circleView.alpha = 1.0
-            //circleView.frame = CGRect(x: Int(screenWidth/2), y: Int(screenHeight/2), width: 80, height: 80)
-
-            self.circleView.frame = CGRect(x: 0, y: 0, width: (self.view.bounds.width), height: (self.view.bounds.height))
-            self.circleView.layer.cornerRadius = 0
-        }
-
-        //cubeInfoOverlayView.updateText("TEXTO NOVO")
-    }
-   
-    
-//    func updateTextWithTimer() {
-//        if index < self.strTITLE.count {
-//            let letter = strTITLE[strTITLE.startIndex...strTITLE.index(strTITLE.startIndex, offsetBy: index)]
-//            cubeInfoOverlayView.updateText("\(letter)")
-//            index += 1
-//        } else {
-//            // Se todas as letras foram exibidas, invalidar o timer para parar as atualizações
-//            timer?.invalidate()
-//            timer = nil
-//        }
-//    }
     
     // gesture handlers
     @objc
