@@ -151,7 +151,9 @@ class ViewController: UIViewController {
             // TOQUE
             let touch_Location = recognizer.location(in: sceneView);
             let projectedOrigin = sceneView.projectPoint(beganPanHitResult.worldCoordinates);
-            let estimatedPoint = sceneView.unprojectPoint(SCNVector3( Float(touch_Location.x), Float(touch_Location.y), projectedOrigin.z) );
+            let estimatedPoint = sceneView.unprojectPoint(SCNVector3( Float(touch_Location.x), 
+                                                                      Float(touch_Location.y),
+                                                                      projectedOrigin.z) );
 
             // PLANO
             var plane = "?";
@@ -176,6 +178,7 @@ class ViewController: UIViewController {
                 return
             }
             
+            // DIREITA ou ESQUERDA
             if side == CubeSides.right || side == CubeSides.left {
                 if absYDiff > absZDiff {
                     plane = "Y";
@@ -196,6 +199,8 @@ class ViewController: UIViewController {
                     }
                 }
             }
+            
+            // CIMA ou BAIXO
             else if side == CubeSides.up || side == CubeSides.down {
                 if absXDiff > absZDiff {
                     plane = "X";
@@ -216,6 +221,8 @@ class ViewController: UIViewController {
                     }
                 }
             }
+            
+            // TRÁS ou FRENTE
             else if side == CubeSides.back || side == CubeSides.front {
                 if absXDiff > absYDiff {
                     plane = "X";
