@@ -22,10 +22,10 @@ struct SwiftUIView: View {
 
     
     var body: some View {
-        ZStack {
-            Color.purple.ignoresSafeArea()
+        //ZStack {
+            //Color.purple.ignoresSafeArea()
             MyView()
-        }
+        //}
     }
 
 }

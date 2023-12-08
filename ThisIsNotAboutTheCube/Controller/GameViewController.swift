@@ -33,14 +33,17 @@ class ViewController: UIViewController {
         // SETUP SCENE
         sceneView = SCNView(frame: self.view.frame)
         sceneView.scene = SCNScene()
-        sceneView.backgroundColor = .clear//UIColor(white: 0.9, alpha: 1.0)
+        sceneView.backgroundColor = UIColor.white//UIColor(white: 0.9, alpha: 1.0)
         sceneView.showsStatistics = true
+        sceneView.autoenablesDefaultLighting = true
+        sceneView.allowsCameraControl = true
         self.view.addSubview(sceneView)
         rootNode = sceneView.scene!.rootNode
         
        
         // criando CUBO e adicionando na cena
         rubiksCube = RubiksCube()
+        rubiksCube.position = SCNVector3Make(0, 0, 0)
         rootNode.addChildNode(rubiksCube)
         
         // Criando a animação de flutuação
@@ -54,22 +57,36 @@ class ViewController: UIViewController {
             //rubiksCube.runAction(floatForever)
         }
         
-        // criando CAMERA e adicionando na cena
+        // CAMERA
         let camera = SCNCamera()
         camera.automaticallyAdjustsZRange = true;
         cameraNode = SCNNode()
         cameraNode.camera = camera
+        cameraNode.position = SCNVector3Make(0, 0, 5);
+        cameraNode.look(at: rubiksCube.position)
+        cameraNode.eulerAngles = .init(x: -0.8, y: 0.8, z: 0)
+        cameraNode.pivot = SCNMatrix4MakeTranslation(0, 0, -5);
+        
         rootNode.addChildNode(cameraNode)
         
-        cameraNode.position = SCNVector3Make(0, 0, 0);
-        cameraNode.eulerAngles = .init(x: -0.8, y: 0.8, z: 0)
-        cameraNode.pivot = SCNMatrix4MakeTranslation(0, 0, -10);
+        
  
         // gesture recognizers
         //let rotationRecognizer = UIRotationGestureRecognizer(target: self, action: #selector(sceneRotated(_:)))
         let panRecognizer = UIPanGestureRecognizer(target: self, action: #selector(sceneTouched(_:)))
 
         sceneView.gestureRecognizers = [panRecognizer]
+
+        // SALA
+        let roomSize = SCNVector3(x: 5, y: 5, z: 5)
+        let roomGeometry = SCNBox(width: CGFloat(roomSize.x), height: CGFloat(roomSize.y), length: CGFloat(roomSize.z), chamferRadius: 0)
+        let roomNode = SCNNode(geometry: roomGeometry)
+
+        let roomMaterial = SCNMaterial()
+        roomMaterial.diffuse.contents = UIColor.purple
+        roomGeometry.materials = [roomMaterial]
+        roomNode.position = SCNVector3Make(0, 0, 0)
+        //rootNode.addChildNode(roomNode)
     }
     
     
