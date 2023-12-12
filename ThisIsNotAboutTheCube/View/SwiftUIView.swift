@@ -25,7 +25,7 @@ struct SwiftUIView: View {
         ZStack {
             Color.purple.ignoresSafeArea()
             MyView()
-        }
+        } 
     }
 
 }

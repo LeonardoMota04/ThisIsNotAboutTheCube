@@ -7,7 +7,7 @@
 
 import SceneKit
 
-enum CubeSides {
+enum CubeSide {
     case front  // F
     case back   // B
 
@@ -22,7 +22,7 @@ enum CubeSides {
 
 class RubiksCube: SCNNode {
     
-    let cubeWidth:Float = 1
+    let cubeWidth:CGFloat = 1
     //let spaceBetweenCubes:Float = 0.05
     let colors:[UIColor] = [.orange, .green, .red, .blue, .yellow, .white]
 
@@ -66,9 +66,9 @@ class RubiksCube: SCNNode {
         for i in 0..<2 {
             for j in 0..<2 {
                 for k in 0..<2 {
-                    let cubeGeometry = SCNBox(width: CGFloat(cubeWidth),
-                                              height: CGFloat(cubeWidth),
-                                              length: CGFloat(cubeWidth),
+                    let cubeGeometry = SCNBox(width: cubeWidth,
+                                              height: cubeWidth,
+                                              length: cubeWidth,
                                               chamferRadius: 0.15)
                     if i == 0 && j == 0 {
                         cubeGeometry.materials = (k % 2 == 0) 
@@ -94,21 +94,21 @@ class RubiksCube: SCNNode {
                     
                     let cube = SCNNode(geometry: cubeGeometry)
                     cube.position = SCNVector3(x: xPos, y: yPos, z: zPos)
-                    xPos += cubeWidth //+ spaceBetweenCubes
+                    xPos += Float(cubeWidth) //+ spaceBetweenCubes
                     
                     self.addChildNode(cube)
                 }
                 xPos = -cubeOffsetDistance
-                yPos += cubeWidth //+ spaceBetweenCubes
+                yPos += Float(cubeWidth) //+ spaceBetweenCubes
             }
             xPos = -cubeOffsetDistance
             yPos = -cubeOffsetDistance
-            zPos += cubeWidth //+ spaceBetweenCubes
+            zPos += Float(cubeWidth) //+ spaceBetweenCubes
         }
     }
     
     private func cubeOffsetDistance()->Float {
-        return (cubeWidth) / 2
+        return Float((cubeWidth) / 2)
     }
     
     func getSouthWall() -> [SCNNode] {

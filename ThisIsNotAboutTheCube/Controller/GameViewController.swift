@@ -149,9 +149,9 @@ class ViewController: UIViewController {
             animationLock = true
             
             // TOQUE
-            let touch_Location = recognizer.location(in: sceneView);
-            let projectedOrigin = sceneView.projectPoint(beganPanHitResult.worldCoordinates);
-            let estimatedPoint = sceneView.unprojectPoint(SCNVector3( Float(touch_Location.x), 
+            let touch_Location = recognizer.location(in: sceneView); // posicao do toque
+            let projectedOrigin = sceneView.projectPoint(beganPanHitResult.worldCoordinates); // coordenadas do ponto inicial do toque em 3D
+            let estimatedPoint = sceneView.unprojectPoint(SCNVector3( Float(touch_Location.x),
                                                                       Float(touch_Location.y),
                                                                       projectedOrigin.z) );
 
@@ -159,8 +159,8 @@ class ViewController: UIViewController {
             var plane = "?";
             var direction = 1;
             
-            // PONTO APROXIMADO
-            let xDiff = estimatedPoint.x - beganPanHitResult.worldCoordinates.x;
+            //
+            let xDiff = estimatedPoint.x - beganPanHitResult.worldCoordinates.x; // movimento relativo desde o inicio do toque ate o momento atual
             let yDiff = estimatedPoint.y - beganPanHitResult.worldCoordinates.y;
             let zDiff = estimatedPoint.z - beganPanHitResult.worldCoordinates.z;
             
@@ -169,64 +169,64 @@ class ViewController: UIViewController {
             let absZDiff = abs(zDiff)
             
             // LADO TOCADO
-            var side:CubeSides!
-            side = resolveCubeSize(hitResult: beganPanHitResult, edgeDistanceFromOrigin: 0.975)
+            var side:CubeSide!
+            side = selectedCubeSide(hitResult: beganPanHitResult, edgeDistanceFromOrigin: 0.975)
             
-            if side == CubeSides.none {
+            if side == CubeSide.none {
                 self.animationLock = false;
                 self.beganPanNode = nil;
                 return
             }
             
             // DIREITA ou ESQUERDA
-            if side == CubeSides.right || side == CubeSides.left {
+            if side == CubeSide.right || side == CubeSide.left {
                 if absYDiff > absZDiff {
                     plane = "Y";
-                    if side == CubeSides.right {
-                        direction = yDiff > 0 ? -1 : 1;
+                    if side == CubeSide.right {
+                        direction = yDiff > 0 ? 1 : -1;
                     }
                     else {
-                        direction = yDiff > 0 ? 1 : -1;
+                        direction = yDiff > 0 ? -1 : 1;
                     }
                 }
                 else {
                     plane = "Z";
-                    if side == CubeSides.right {
-                        direction = zDiff > 0 ? 1 : -1;
+                    if side == CubeSide.right {
+                        direction = zDiff > 0 ? -1 : 1;
                     }
                     else {
-                        direction = zDiff > 0 ? -1 : 1;
+                        direction = zDiff > 0 ? 1 : -1;
                     }
                 }
             }
             
             // CIMA ou BAIXO
-            else if side == CubeSides.up || side == CubeSides.down {
+            else if side == CubeSide.up || side == CubeSide.down {
                 if absXDiff > absZDiff {
                     plane = "X";
-                    if side == CubeSides.up {
-                        direction = xDiff > 0 ? 1 : -1;
+                    if side == CubeSide.up {
+                        direction = xDiff > 0 ? -1 : 1;
                     }
                     else {
-                        direction = xDiff > 0 ? -1 : 1;
+                        direction = xDiff > 0 ? 1 : -1;
                     }
                 }
                 else {
                     plane = "Z"
-                    if side == CubeSides.up {
-                        direction = zDiff > 0 ? -1 : 1;
+                    if side == CubeSide.up {
+                        direction = zDiff > 0 ? 1 : -1;
                     }
                     else {
-                        direction = zDiff > 0 ? 1 : -1;
+                        direction = zDiff > 0 ? -1 : 1;
                     }
                 }
             }
             
             // TRÁS ou FRENTE
-            else if side == CubeSides.back || side == CubeSides.front {
+            else if side == CubeSide.back || side == CubeSide.front {
                 if absXDiff > absYDiff {
                     plane = "X";
-                    if side == CubeSides.back {
+                    if side == CubeSide.back {
                         direction = xDiff > 0 ? -1 : 1;
                     }
                     else {
@@ -235,7 +235,7 @@ class ViewController: UIViewController {
                 }
                 else {
                     plane = "Y"
-                    if side == CubeSides.back {
+                    if side == CubeSide.back {
                         direction = yDiff > 0 ? 1 : -1;
                     }
                     else {
@@ -246,24 +246,31 @@ class ViewController: UIViewController {
             
             // PEGANDO NODES QUE SERÃO ANIMADOS
             let nodesToRotate =  rubiksCube.childNodes { (child, _) -> Bool in
+                
                 // PLANO Z - DIREITA E ESQUERDA ou PLANO X - FRENTE E TRÁS
-                if ((side == CubeSides.right || side == CubeSides.left) && plane == "Z")
-                    || ((side == CubeSides.front || side == CubeSides.back) && plane == "X") {
+                if ((side == CubeSide.right || side == CubeSide.left) && plane == "Z")
+                    || ((side == CubeSide.front || side == CubeSide.back) && plane == "X") {
                         self.rotationAxis = SCNVector3(0,1,0) // Y
                     return child.position.y.nearlyEqual(b: self.beganPanNode.position.y, tolerance: 0.025)
                 }
+                
+                
                 // PLANO Y - DIREITA E ESQUERDA ou PLANO X - CIMA E BAIXO
-                if ((side == CubeSides.right || side == CubeSides.left) && plane == "Y")
-                    || ((side == CubeSides.up || side == CubeSides.down) && plane == "X") {
+                if ((side == CubeSide.right || side == CubeSide.left) && plane == "Y")
+                    || ((side == CubeSide.up || side == CubeSide.down) && plane == "X") {
                         self.rotationAxis = SCNVector3(0,0,1) // Z
                         return child.position.z.nearlyEqual(b: self.beganPanNode.position.z, tolerance: 0.025)
                 }
+                
+                
                 // PLANO Y - FRENTE E TRÁS ou PLANO Z - CIMA E BAIXO
-                if ((side == CubeSides.front || side == CubeSides.back) && plane == "Y")
-                    || ((side == CubeSides.up || side == CubeSides.down) && plane == "Z") {
+                if ((side == CubeSide.front || side == CubeSide.back) && plane == "Y")
+                    || ((side == CubeSide.up || side == CubeSide.down) && plane == "Z") {
                         self.rotationAxis = SCNVector3(1,0,0) // X
                         return child.position.x.nearlyEqual(b: self.beganPanNode.position.x, tolerance: 0.025)
                 }
+                
+                
                 return false;
             }
             
@@ -273,6 +280,7 @@ class ViewController: UIViewController {
                 self.beganPanNode = nil;
                 return
             }
+            
             // add nodes we want to rotate to a parent node so that we can rotate relative to the root
             let container = SCNNode()
             rootNode.addChildNode(container)
@@ -280,11 +288,9 @@ class ViewController: UIViewController {
                 container.addChildNode(nodeToRotate)
             }
             
-            
-            
             // create action
-            let rotationAngle = -CGFloat(direction) * .pi/2;
-            let rotation_Action = SCNAction.rotate(by: rotationAngle, around: self.rotationAxis, duration: 0.3)
+            let rotationAngle = CGFloat(direction) * .pi/2;
+            let rotation_Action = SCNAction.rotate(by: rotationAngle, around: self.rotationAxis, duration: 0.2)
             
             // TIRANDO NODES DO CONTAINER
             container.runAction(rotation_Action, completionHandler: { () -> Void in
@@ -294,34 +300,43 @@ class ViewController: UIViewController {
                     node.transform = transform
                     self.rubiksCube.addChildNode(node)
                 }
-                print(self.rubiksCube.isNorthWallSolved())
+                print("\n\nLADO NORTE RESOLVIDO: \(self.rubiksCube.isNorthWallSolved())")
+                print("CHILDNODE\(self.rubiksCube.childNodes.debugDescription)")
+                print("\nROTACAO ANGULO: \(rotationAngle) / ROTACAO: \(self.rotationAxis!)")
+                print("lado: \(side!)")
+                self.animationLock = false
                 self.animationLock = false
                 self.beganPanNode = nil
             })
         }
     }
     
-    private func resolveCubeSize(hitResult: SCNHitTestResult, edgeDistanceFromOrigin:Float)->CubeSides {
+    private func selectedCubeSide(hitResult: SCNHitTestResult, edgeDistanceFromOrigin:Float) -> CubeSide {
         
+        // X
         if beganPanHitResult.worldCoordinates.x.nearlyEqual(b: edgeDistanceFromOrigin, tolerance: 0.025) {
-            return CubeSides.right
+            return .right
         }
         else if beganPanHitResult.worldCoordinates.x.nearlyEqual(b: -edgeDistanceFromOrigin, tolerance: 0.025) {
-            return CubeSides.left
+            return .left
         }
+        
+        // Y
         else if beganPanHitResult.worldCoordinates.y.nearlyEqual(b: edgeDistanceFromOrigin, tolerance: 0.025) {
-            return CubeSides.up
+            return .up
         }
         else if beganPanHitResult.worldCoordinates.y.nearlyEqual(b: -edgeDistanceFromOrigin, tolerance: 0.025) {
-            return CubeSides.down
+            return .down
         }
+        
+        // Z
         else if beganPanHitResult.worldCoordinates.z.nearlyEqual(b: edgeDistanceFromOrigin, tolerance: 0.025) {
-            return CubeSides.back
+            return .front
         }
         else if beganPanHitResult.worldCoordinates.z.nearlyEqual(b: -edgeDistanceFromOrigin, tolerance: 0.025) {
-            return CubeSides.front
+            return .back
         }
-        return CubeSides.none
+        return .none
     }
     
     
