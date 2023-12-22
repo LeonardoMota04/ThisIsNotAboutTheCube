@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		262879912B35200D0014E434 /* cel.shader in Resources */ = {isa = PBXBuildFile; fileRef = 262879902B35200D0014E434 /* cel.shader */; };
 		264209AE2B2008500073A984 /* ThisIsNotAboutTheCubeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 264209AD2B2008500073A984 /* ThisIsNotAboutTheCubeApp.swift */; };
 		264209B22B2008520073A984 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 264209B12B2008520073A984 /* Assets.xcassets */; };
 		264209B52B2008520073A984 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 264209B42B2008520073A984 /* Preview Assets.xcassets */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		262879902B35200D0014E434 /* cel.shader */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cel.shader; sourceTree = "<group>"; };
 		264209AA2B2008500073A984 /* ThisIsNotAboutTheCube.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ThisIsNotAboutTheCube.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		264209AD2B2008500073A984 /* ThisIsNotAboutTheCubeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThisIsNotAboutTheCubeApp.swift; sourceTree = "<group>"; };
 		264209B12B2008520073A984 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -59,6 +61,7 @@
 			isa = PBXGroup;
 			children = (
 				264209AD2B2008500073A984 /* ThisIsNotAboutTheCubeApp.swift */,
+				262879902B35200D0014E434 /* cel.shader */,
 				265EE2972B200ED6009ADC21 /* Info.plist */,
 				264209B12B2008520073A984 /* Assets.xcassets */,
 				265EE29A2B200EF4009ADC21 /* Controller */,
@@ -171,6 +174,7 @@
 				264209B52B2008520073A984 /* Preview Assets.xcassets in Resources */,
 				264209B22B2008520073A984 /* Assets.xcassets in Resources */,
 				265EE2962B200EBA009ADC21 /* joystix monospace.otf in Resources */,
+				262879912B35200D0014E434 /* cel.shader in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
