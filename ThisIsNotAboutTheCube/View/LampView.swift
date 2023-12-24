@@ -9,17 +9,10 @@ import SwiftUI
 import SceneKit
 import CoreImage
 
-struct MyView: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> ViewController {
-        let vc = ViewController()
-        return vc
-    }
-    func updateUIViewController(_ uiViewController: ViewController, context: Context) {}
-}
 
 
 
-struct SwiftUIView: View {
+struct LampView: View {
     @State private var isLightFlashing = false
     @State private var randomOpacity: Double = 0.5
     
@@ -37,19 +30,19 @@ struct SwiftUIView: View {
                     .mask(TriangleMask())
                     .opacity(randomOpacity)
                     .onAppear {
-                        withAnimation(.easeInOut(duration: 1.0).repeatForever()) {
+                        withAnimation(.easeInOut(duration: 0.3).repeatForever()) {
                             updateRandomOpacity()
                             isLightFlashing.toggle()
                         }
                     }
                     //.blendMode(.overlay)
                     .ignoresSafeArea()
-                MyView()
+                //CubeView()
             }
             
                 
         }
-        .saturation(0.1)
+        //.saturation(0)
         
     }
     // GERA VALORES ALEATORIOS PARA EFEITO DE LUZ PISCANDO
@@ -74,5 +67,5 @@ struct TriangleMask: View {
 }
 
 #Preview {
-    SwiftUIView()
+    LampView()
 }

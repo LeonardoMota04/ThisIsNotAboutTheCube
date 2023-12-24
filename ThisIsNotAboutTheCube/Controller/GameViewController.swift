@@ -1,8 +1,8 @@
 import UIKit
 import SceneKit
 
-class ViewController: UIViewController {
-    
+class ViewController: UIViewController, ObservableObject{
+        
     let screenSize: CGRect = UIScreen.main.bounds
     var screenWidth: Float!
     var screenHeight: Float!
@@ -19,6 +19,7 @@ class ViewController: UIViewController {
     var animationLock = false
     
     var shouldFloat = true
+    @Published var numOfMovements: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -172,12 +173,15 @@ class ViewController: UIViewController {
             var side:CubeSide!
             side = selectedCubeSide(hitResult: beganPanHitResult, edgeDistanceFromOrigin: 0.975)
             
+
+            
             if side == CubeSide.none {
                 self.animationLock = false;
                 self.beganPanNode = nil;
                 return
             }
             
+            // MARK: - DEFININDO DIRECTION
             // DIREITA ou ESQUERDA
             if side == CubeSide.right || side == CubeSide.left {
                 if absYDiff > absZDiff {
@@ -244,7 +248,7 @@ class ViewController: UIViewController {
                 }
             }
             
-            // PEGANDO NODES QUE SERÃO ANIMADOS
+            // MARK: - ROTATION AXIS && POSITIONS
             let nodesToRotate =  rubiksCube.childNodes { (child, _) -> Bool in
                 
                 // PLANO Z - DIREITA E ESQUERDA ou PLANO X - FRENTE E TRÁS
@@ -292,6 +296,11 @@ class ViewController: UIViewController {
             let rotationAngle = CGFloat(direction) * .pi/2;
             let rotation_Action = SCNAction.rotate(by: rotationAngle, around: self.rotationAxis, duration: 0.2)
             
+            let rotatedSide = selectedCubeSide(hitResult: beganPanHitResult, edgeDistanceFromOrigin: 0.975)
+            let moveNotation = convertToMoveNotation(rotatedSide: rotatedSide, plane: plane, direction: direction)
+           
+
+
             // TIRANDO NODES DO CONTAINER
             container.runAction(rotation_Action, completionHandler: { () -> Void in
                 for node: SCNNode in nodesToRotate {
@@ -300,16 +309,69 @@ class ViewController: UIViewController {
                     node.transform = transform
                     self.rubiksCube.addChildNode(node)
                 }
+                self.numOfMovements += 1
                 print("\n\nLADO NORTE RESOLVIDO: \(self.rubiksCube.isNorthWallSolved())")
-                print("CHILDNODE\(self.rubiksCube.childNodes.debugDescription)")
-                print("\nROTACAO ANGULO: \(rotationAngle) / ROTACAO: \(self.rotationAxis!)")
+                //print("CHILDNODE\(self.rubiksCube.childNodes.debugDescription)")
+                print("\nROTACAO ANGULO: \(rotationAngle) / ROTACAOaxis: \(self.rotationAxis!)")
                 print("lado: \(side!)")
+                print("plano: \(plane)")
+                print("direction: \(direction)")
+                print("Move Notation: \(moveNotation)")
+                print("NUM DE MOVIMENTOS: \(self.numOfMovements)")
                 self.animationLock = false
                 self.animationLock = false
                 self.beganPanNode = nil
             })
         }
     }
+    
+    func convertToMoveNotation(rotatedSide: CubeSide, plane: String, direction: Int) -> String {
+        let sideNotation: String
+        let directionNotation: String
+
+        // Identificar o lado rotacionado
+        let rotatedSideNotation: String
+        switch rotatedSide {
+        case .up:
+            rotatedSideNotation = "U"
+        case .down:
+            rotatedSideNotation = "D"
+        case .right:
+            rotatedSideNotation = "R"
+        case .left:
+            rotatedSideNotation = "L"
+        case .front:
+            rotatedSideNotation = "F"
+        case .back:
+            rotatedSideNotation = "B"
+        case .none:
+            rotatedSideNotation = ""
+        }
+
+        // Identificar o lado tocado (o lado oposto ao rotacionado)
+        switch plane {
+        case "X":
+            sideNotation = direction > 0 ? "U" : "D"
+        case "Y":
+            sideNotation = direction > 0 ? "R" : "L"
+        case "Z":
+            sideNotation = direction > 0 ? "F" : "B"
+        default:
+            sideNotation = ""
+        }
+
+        // Identificar a direção da rotação
+        directionNotation = direction < 0 ? "'" : ""
+
+        // Se o lado rotacionado for diferente do lado tocado, então adicione a notação do lado rotacionado
+        if rotatedSideNotation != sideNotation {
+            return rotatedSideNotation + directionNotation
+        }
+
+        // Caso contrário, retorne a notação do lado tocado
+        return sideNotation + directionNotation
+    }
+
     
     private func selectedCubeSide(hitResult: SCNHitTestResult, edgeDistanceFromOrigin:Float) -> CubeSide {
         
@@ -338,8 +400,6 @@ class ViewController: UIViewController {
         }
         return .none
     }
-    
-    
 }
 
 extension ViewController: ViewControllerModel {
