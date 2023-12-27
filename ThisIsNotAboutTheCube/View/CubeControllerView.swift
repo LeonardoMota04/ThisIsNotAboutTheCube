@@ -7,17 +7,18 @@
 
 import SwiftUI
 
-struct CubeView: UIViewControllerRepresentable {
+// MARK: - View Controller Representable
+struct CubeControllerView: UIViewControllerRepresentable {
     @ObservedObject var viewController: ViewController
 
     func makeUIViewController(context: Context) -> ViewController {
         return viewController
     }
-
     func updateUIViewController(_ uiViewController: ViewController, context: Context) {}
 }
 
-struct MovementsView: View {
+// MARK: - SwiftUI View
+struct CubeView: View {
     
     @State var numOfMovement: Int = 0
     @ObservedObject private var vc = ViewController()
@@ -26,7 +27,7 @@ struct MovementsView: View {
         
         ZStack(alignment: .top) {
             Color.purple.ignoresSafeArea()
-            CubeView(viewController: vc)
+            CubeControllerView(viewController: vc)
             VStack {
                 Text("\(vc.numOfMovements)")
                     .font(.system(size: 100))
@@ -38,5 +39,5 @@ struct MovementsView: View {
 }
 
 #Preview {
-    MovementsView()
+    CubeView()
 }
