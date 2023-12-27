@@ -1,8 +1,16 @@
+//import UIKit
+//import SceneKit
+
 import UIKit
 import SceneKit
+ import CoreMotion
+import Combine
 
 class ViewController: UIViewController, ObservableObject{
-        
+    let motionManager = MotionManager()
+    var cancellables: Set<AnyCancellable> = []
+
+    
     let screenSize: CGRect = UIScreen.main.bounds
     var screenWidth: Float!
     var screenHeight: Float!
@@ -63,7 +71,7 @@ class ViewController: UIViewController, ObservableObject{
         rootNode.addChildNode(cameraNode)
         
         cameraNode.position = SCNVector3Make(0, 0, 0);
-        cameraNode.eulerAngles = .init(x: -0.8, y: 0.8, z: 0)
+        //cameraNode.eulerAngles = .init(x: -0.8, y: 0.8, z: 0)
         cameraNode.pivot = SCNMatrix4MakeTranslation(0, 0, -10);
  
         // gesture recognizers
@@ -71,8 +79,28 @@ class ViewController: UIViewController, ObservableObject{
         let panRecognizer = UIPanGestureRecognizer(target: self, action: #selector(sceneTouched(_:)))
 
         sceneView.gestureRecognizers = [panRecognizer]
+        
+        // Chamada da função detectMotion
+        motionManager.detectMotion()
+        motionManager.onUpdate = { [weak self] (xValue, yValue) in
+            self?.updateCameraRotations(xValue, yValue)
+        }
+
+        
     }
-    
+    func updateCameraRotations(_ xValue: CGFloat, _ yValue: CGFloat) {
+        let rotationAngleX = Float(xValue)
+        let rotationAngleY = Float(yValue)
+
+        let rotationX = SCNMatrix4MakeRotation(rotationAngleX, 0, 0.1, 0)
+        let rotationY = SCNMatrix4MakeRotation(rotationAngleY, 0.1, 0, 0)
+
+        let combinedRotationMatrix = SCNMatrix4Mult(rotationX, rotationY)
+        cameraNode.transform = combinedRotationMatrix
+        //cameraNode.transform = rotationY
+    }
+
+
     
     // gesture handlers
     @objc
@@ -105,31 +133,31 @@ class ViewController: UIViewController, ObservableObject{
         let location = recognizer.location(in: sceneView)
         let hitResults = sceneView.hitTest(location, options: nil)
         
-        // MARK: - DOIS DEDOS: MANIPULAR CAMERA
-        if recognizer.numberOfTouches == 2 {
-            // ROTATIONS
-            let old_Rotation = cameraNode.rotation as SCNQuaternion;
-            var new_Rotation = GLKQuaternionMakeWithAngleAndAxis(old_Rotation.w, old_Rotation.x, old_Rotation.y, old_Rotation.z)
-
-            // VELOCITY
-            let xVelocity = Float(recognizer.velocity(in: sceneView).x) * 0.1
-            let yVelocity = Float(recognizer.velocity(in: sceneView).y) * 0.1
-            let velocity = xVelocity + yVelocity
-            
-            // AXIS
-            let rotX = GLKQuaternionMakeWithAngleAndAxis(-xVelocity/screenWidth, 0, 1, 0)
-            let rotY = GLKQuaternionMakeWithAngleAndAxis(-yVelocity/screenHeight, 1, 0, 0)
-            
-            // NETS
-            let rotation_Net = GLKQuaternionMultiply(rotX, rotY)
-            new_Rotation = GLKQuaternionMultiply(new_Rotation, rotation_Net)
-            
-            // NEW AXIS AND ANGLE
-            let axis = GLKQuaternionAxis(new_Rotation)
-            let angle = GLKQuaternionAngle(new_Rotation)
-            
-            cameraNode.rotation = SCNVector4Make(axis.x, axis.y, axis.z, angle)
-        }
+//        // MARK: - DOIS DEDOS: MANIPULAR CAMERA
+//        if recognizer.numberOfTouches == 2 {
+//            // ROTATIONS
+//            let old_Rotation = cameraNode.rotation as SCNQuaternion;
+//            var new_Rotation = GLKQuaternionMakeWithAngleAndAxis(old_Rotation.w, old_Rotation.x, old_Rotation.y, old_Rotation.z)
+//
+//            // VELOCITY
+//            let xVelocity = Float(recognizer.velocity(in: sceneView).x) * 0.1
+//            let yVelocity = Float(recognizer.velocity(in: sceneView).y) * 0.1
+//            let velocity = xVelocity + yVelocity
+//            
+//            // AXIS
+//            let rotX = GLKQuaternionMakeWithAngleAndAxis(-xVelocity/screenWidth, 0, 1, 0)
+//            let rotY = GLKQuaternionMakeWithAngleAndAxis(-yVelocity/screenHeight, 1, 0, 0)
+//            
+//            // NETS
+//            let rotation_Net = GLKQuaternionMultiply(rotX, rotY)
+//            new_Rotation = GLKQuaternionMultiply(new_Rotation, rotation_Net)
+//            
+//            // NEW AXIS AND ANGLE
+//            let axis = GLKQuaternionAxis(new_Rotation)
+//            let angle = GLKQuaternionAngle(new_Rotation)
+//            
+//            cameraNode.rotation = SCNVector4Make(axis.x, axis.y, axis.z, angle)
+//        }
 
         
         // MARK: - 1 DEDO: MANIPULAR CUBO

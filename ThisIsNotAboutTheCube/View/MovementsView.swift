@@ -17,23 +17,31 @@ struct CubeView: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: ViewController, context: Context) {}
 }
 
+// VIEW
 struct MovementsView: View {
     
     @State var numOfMovement: Int = 0
     @ObservedObject private var vc = ViewController()
 
+    @StateObject var motionManager: MotionManager = .init()
+    
+    
     var body: some View {
         
         ZStack(alignment: .top) {
-            Color.purple.ignoresSafeArea()
+            (vc.numOfMovements > 1) ? Color.gray.ignoresSafeArea() : Color.purple.ignoresSafeArea()
+            
             CubeView(viewController: vc)
-            VStack {
-                Text("\(vc.numOfMovements)")
-                    .font(.system(size: 100))
+            
+            
+            
+            Text("\(vc.numOfMovements)")
+                .font(.system(size: 100))
                 
-            }
             
         }
+        .onAppear(perform: motionManager.detectMotion)
+        .onDisappear(perform: motionManager.stopMotionUpdates)
     }
 }
 
