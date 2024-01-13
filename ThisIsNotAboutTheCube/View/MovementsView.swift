@@ -30,6 +30,7 @@ struct MovementsView: View {
             VStack {
                 Text("\(vc.numOfMovements)")
                     .font(.system(size: 100))
+                    .foregroundStyle(.white)
                 
             }
             

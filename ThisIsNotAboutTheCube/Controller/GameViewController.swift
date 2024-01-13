@@ -2,68 +2,87 @@ import UIKit
 import SceneKit
 
 class ViewController: UIViewController, ObservableObject{
-        
+    
+    // MARK: - VARIABLES
+    // SCREEN
     let screenSize: CGRect = UIScreen.main.bounds
     var screenWidth: Float!
     var screenHeight: Float!
     
+    // SCENE
     var sceneView: SCNView!
     var rootNode: SCNNode!
     var cameraNode: SCNNode!
-
     var rubiksCube: RubiksCube!
 
+    // TOUCHES
     var beganPanHitResult: SCNHitTestResult!
     var beganPanNode: SCNNode!
     var rotationAxis:SCNVector3!
     
+    // CONTROL VARIABLES
     var animationLock = false
-    
     var shouldFloat = true
+    
+    // PUBLISHED VARIABLES (SWIFTUI)
     @Published var numOfMovements: Int = 0
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // SCREEN
+        setupScene()
+        createRubiksCube()
+        setupFloatingAnimation()
+        setupCamera()
+        setupLights()
+        setupGestureRecognizers()
+    }
+    
+    // MARK: - SCENE
+    func setupScene() {
         screenWidth = Float(screenSize.width)
         screenHeight = Float(screenSize.height)
-        
-        // SETUP SCENE
+
         sceneView = SCNView(frame: self.view.frame)
         sceneView.scene = SCNScene()
-        sceneView.backgroundColor = .clear//UIColor(white: 0.9, alpha: 1.0)
+        sceneView.backgroundColor = .clear
         sceneView.showsStatistics = true
         self.view.addSubview(sceneView)
         rootNode = sceneView.scene!.rootNode
-        
-       
-        // criando CUBO e adicionando na cena
+    }
+
+    // MARK: - CUBE
+    func createRubiksCube() {
         rubiksCube = RubiksCube()
         rootNode.addChildNode(rubiksCube)
+    }
 
-        // Criando a animação de flutuação
+    // MARK: - FLOATING ANIMATION (PHASE)
+    func setupFloatingAnimation() {
         let floatUp = SCNAction.move(by: SCNVector3(0, 0.3, 0), duration: 1.0)
         let floatDown = SCNAction.move(by: SCNVector3(0, -0.3, 0), duration: 1.0)
         let floatSequence = SCNAction.sequence([floatUp, floatDown])
         let floatForever = SCNAction.repeatForever(floatSequence)
 
-        // Aplicando a animação ao cubo
         if shouldFloat {
             //rubiksCube.runAction(floatForever)
         }
-        
-        // criando CAMERA e adicionando na cena
+    }
+
+    // MARK: - CAMERA
+    func setupCamera() {
         let camera = SCNCamera()
-        //camera.automaticallyAdjustsZRange = true;
         cameraNode = SCNNode()
         cameraNode.camera = camera
         rootNode.addChildNode(cameraNode)
-        
-        cameraNode.position = SCNVector3Make(0, 0, 0);
-        //cameraNode.eulerAngles = .init(x: -0.8, y: 0.8, z: 0)
-        cameraNode.pivot = SCNMatrix4MakeTranslation(0, 0, -10);
- 
-        // ESFERA REPRESENTANTE DA LUZ
+
+        cameraNode.position = SCNVector3Make(0, 0, 0)
+        cameraNode.pivot = SCNMatrix4MakeTranslation(0, 0, -10)
+    }
+
+    // MARK: - LIGHTS
+    func setupLights() {
+        // Sphere that follows the camera to illuminate the top of the cube
         let sphereGeometry = SCNSphere(radius: 0.1)
         let sphereNode = SCNNode(geometry: sphereGeometry)
         let orangeMaterial = SCNMaterial()
@@ -71,8 +90,8 @@ class ViewController: UIViewController, ObservableObject{
         sphereGeometry.materials = [orangeMaterial]
         sphereNode.position = SCNVector3(0, 1.5, -5)
         cameraNode.addChildNode(sphereNode)
-
-        // LUZ OMNI
+        
+        // Light above cube
         let light_Omni = SCNLight()
         light_Omni.type = .omni
         light_Omni.intensity = 1200
@@ -81,22 +100,20 @@ class ViewController: UIViewController, ObservableObject{
         lightNode_Omni.light = light_Omni
         lightNode_Omni.position = sphereNode.position
         sphereNode.addChildNode(lightNode_Omni)
-
-        // LUZ AMBIENT
+        
+        // Ambient light
         let light_Ambient = SCNLight()
         light_Ambient.type = .ambient
         light_Ambient.color = UIColor.white
         light_Ambient.intensity = 10
         let lightNode_Ambient = SCNNode()
         lightNode_Ambient.light = light_Ambient
-        rootNode.addChildNode(lightNode_Ambient) // Adicionando à cena principal (rootNode)
+        rootNode.addChildNode(lightNode_Ambient)
+    }
 
-        
-        
-        // gesture recognizers
-        //let rotationRecognizer = UIRotationGestureRecognizer(target: self, action: #selector(sceneRotated(_:)))
+    // MARK: - GESTURE RECOGNIZERS
+    func setupGestureRecognizers() {
         let panRecognizer = UIPanGestureRecognizer(target: self, action: #selector(sceneTouched(_:)))
-
         sceneView.gestureRecognizers = [panRecognizer]
     }
     
@@ -105,7 +122,7 @@ class ViewController: UIViewController, ObservableObject{
         let location = recognizer.location(in: sceneView)
         let hitResults = sceneView.hitTest(location, options: nil)
         
-        // MARK: - DOIS DEDOS: MANIPULAR CAMERA
+        // MARK: - 2 FINGERS: CAMERA
         if recognizer.numberOfTouches == 2 {
             // ROTATIONS
             let old_Rotation = cameraNode.rotation as SCNQuaternion
@@ -132,7 +149,7 @@ class ViewController: UIViewController, ObservableObject{
         }
 
         
-        // MARK: - 1 DEDO: MANIPULAR CUBO
+        // MARK: - 1 FINGER: CUBE
         // gets first touch
         if recognizer.numberOfTouches == 1
             && hitResults.count > 0
@@ -181,7 +198,7 @@ class ViewController: UIViewController, ObservableObject{
                 return
             }
             
-            // MARK: - DEFININDO DIRECTION
+            // MARK: - DIRECTION
             // DIREITA ou ESQUERDA
             if side == CubeSide.right || side == CubeSide.left {
                 if absYDiff > absZDiff {

@@ -9,9 +9,6 @@ import SwiftUI
 import SceneKit
 import CoreImage
 
-
-
-
 struct LampView: View {
     @State private var isLightFlashing = false
     @State private var randomOpacity: Double = 0.5
@@ -31,12 +28,11 @@ struct LampView: View {
                     .mask(TriangleMask())
                     .opacity(randomOpacity)
                     .onAppear {
-                        withAnimation(.easeInOut(duration: 0.3).repeatForever()) {
+                        withAnimation(.easeInOut(duration: 0.5).repeatForever()) {
                             updateRandomOpacity()
                             isLightFlashing.toggle()
                         }
                     }
-                    //.blendMode(.overlay)
                     .ignoresSafeArea()
                 CubeView(viewController: vc)
             }
