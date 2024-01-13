@@ -15,6 +15,7 @@ import CoreImage
 struct LampView: View {
     @State private var isLightFlashing = false
     @State private var randomOpacity: Double = 0.5
+    @ObservedObject private var vc = ViewController()
     
     var body: some View {
         ZStack {
@@ -37,7 +38,7 @@ struct LampView: View {
                     }
                     //.blendMode(.overlay)
                     .ignoresSafeArea()
-                //CubeView()
+                CubeView(viewController: vc)
             }
             
                 

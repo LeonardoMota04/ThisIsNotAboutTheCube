@@ -10,6 +10,7 @@ class ViewController: UIViewController, ObservableObject{
     var sceneView: SCNView!
     var rootNode: SCNNode!
     var cameraNode: SCNNode!
+
     var rubiksCube: RubiksCube!
 
     var beganPanHitResult: SCNHitTestResult!
@@ -23,10 +24,6 @@ class ViewController: UIViewController, ObservableObject{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupViewControllerModel()
-        
-        
-        
         // SCREEN
         screenWidth = Float(screenSize.width)
         screenHeight = Float(screenSize.height)
@@ -43,7 +40,7 @@ class ViewController: UIViewController, ObservableObject{
         // criando CUBO e adicionando na cena
         rubiksCube = RubiksCube()
         rootNode.addChildNode(rubiksCube)
-        
+
         // Criando a animação de flutuação
         let floatUp = SCNAction.move(by: SCNVector3(0, 0.3, 0), duration: 1.0)
         let floatDown = SCNAction.move(by: SCNVector3(0, -0.3, 0), duration: 1.0)
@@ -57,48 +54,51 @@ class ViewController: UIViewController, ObservableObject{
         
         // criando CAMERA e adicionando na cena
         let camera = SCNCamera()
-        camera.automaticallyAdjustsZRange = true;
+        //camera.automaticallyAdjustsZRange = true;
         cameraNode = SCNNode()
         cameraNode.camera = camera
         rootNode.addChildNode(cameraNode)
         
         cameraNode.position = SCNVector3Make(0, 0, 0);
-        cameraNode.eulerAngles = .init(x: -0.8, y: 0.8, z: 0)
+        //cameraNode.eulerAngles = .init(x: -0.8, y: 0.8, z: 0)
         cameraNode.pivot = SCNMatrix4MakeTranslation(0, 0, -10);
  
+        // ESFERA REPRESENTANTE DA LUZ
+        let sphereGeometry = SCNSphere(radius: 0.1)
+        let sphereNode = SCNNode(geometry: sphereGeometry)
+        let orangeMaterial = SCNMaterial()
+        orangeMaterial.diffuse.contents = UIColor.orange
+        sphereGeometry.materials = [orangeMaterial]
+        sphereNode.position = SCNVector3(0, 1.5, -5)
+        cameraNode.addChildNode(sphereNode)
+
+        // LUZ OMNI
+        let light_Omni = SCNLight()
+        light_Omni.type = .omni
+        light_Omni.intensity = 1200
+        light_Omni.color = UIColor.white
+        let lightNode_Omni = SCNNode()
+        lightNode_Omni.light = light_Omni
+        lightNode_Omni.position = sphereNode.position
+        sphereNode.addChildNode(lightNode_Omni)
+
+        // LUZ AMBIENT
+        let light_Ambient = SCNLight()
+        light_Ambient.type = .ambient
+        light_Ambient.color = UIColor.white
+        light_Ambient.intensity = 10
+        let lightNode_Ambient = SCNNode()
+        lightNode_Ambient.light = light_Ambient
+        rootNode.addChildNode(lightNode_Ambient) // Adicionando à cena principal (rootNode)
+
+        
+        
         // gesture recognizers
         //let rotationRecognizer = UIRotationGestureRecognizer(target: self, action: #selector(sceneRotated(_:)))
         let panRecognizer = UIPanGestureRecognizer(target: self, action: #selector(sceneTouched(_:)))
 
         sceneView.gestureRecognizers = [panRecognizer]
     }
-    
-    
-    // gesture handlers
-    @objc
-    func sceneRotated(_ recognizer: UIRotationGestureRecognizer) {
-        let originalRotation = cameraNode.rotation as SCNQuaternion; // rotação atual, SCNQuaternion representa rotações tridimensionais
-        var newRotation = GLKQuaternionMakeWithAngleAndAxis(originalRotation.w, originalRotation.x, originalRotation.y, originalRotation.z) // nova rotação
-        let rotationSpeed: CGFloat = 1
-        
-        var velocity = recognizer.velocity
-        if recognizer.velocity > 1 {
-            velocity = rotationSpeed
-        } else if recognizer.velocity < -1 {
-            velocity = -rotationSpeed
-        }
-
-        let rotZ = GLKQuaternionMakeWithAngleAndAxis(0.1*Float((velocity)), 0, 0, 1) // rotação do cubo em espiral
-        
-        newRotation = GLKQuaternionMultiply(newRotation, rotZ)
-        
-        // Pegando o EIXO e ANGULO da rotação
-        let axis = GLKQuaternionAxis(newRotation)
-        let angle = GLKQuaternionAngle(newRotation)
-        
-        cameraNode.rotation = SCNVector4Make(axis.x, axis.y, axis.z, angle)
-    }
-
     
     @objc
     func sceneTouched(_ recognizer: UIPanGestureRecognizer) {
@@ -108,7 +108,7 @@ class ViewController: UIViewController, ObservableObject{
         // MARK: - DOIS DEDOS: MANIPULAR CAMERA
         if recognizer.numberOfTouches == 2 {
             // ROTATIONS
-            let old_Rotation = cameraNode.rotation as SCNQuaternion;
+            let old_Rotation = cameraNode.rotation as SCNQuaternion
             var new_Rotation = GLKQuaternionMakeWithAngleAndAxis(old_Rotation.w, old_Rotation.x, old_Rotation.y, old_Rotation.z)
 
             // VELOCITY
@@ -402,33 +402,3 @@ class ViewController: UIViewController, ObservableObject{
     }
 }
 
-extension ViewController: ViewControllerModel {
-    func addSubviews() {
-        //view.addSubview(pageTitle)
-    }
-    
-    func addStyle() {
-        //self.sceneView.backgroundColor = .systemGray
-    }
-    
-    func addConstraints() {
-        
-    }
-    
-    
-}
-
-protocol ViewControllerModel {
-    func addSubviews()
-    func addStyle()
-    func addConstraints()
-}
-
-extension ViewControllerModel {
-    func setupViewControllerModel() {
-        addSubviews()
-        addStyle()
-        addConstraints()
-        
-    }
-}
