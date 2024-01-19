@@ -1,9 +1,14 @@
 import UIKit
 import SceneKit
 
-class ViewController: UIViewController, ObservableObject{
+class ViewController: UIViewController, ObservableObject {
     
     // MARK: - VARIABLES
+    // PHASES - published variables for SwiftUI
+    @Published var cubePhases: [PhaseModel] = []
+    @Published var currentPhaseIndex: Int = 0
+    @Published var numOfMovements: Int = 0
+    
     // SCREEN
     let screenSize: CGRect = UIScreen.main.bounds
     var screenWidth: Float!
@@ -23,11 +28,7 @@ class ViewController: UIViewController, ObservableObject{
     // CONTROL VARIABLES
     var animationLock = false
     var shouldFloat = true
-    
-    // PUBLISHED VARIABLES (SWIFTUI)
-    @Published var numOfMovements: Int = 0
-    
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupScene()
@@ -36,6 +37,33 @@ class ViewController: UIViewController, ObservableObject{
         setupCamera()
         setupLights()
         setupGestureRecognizers()
+    }
+    
+    // MARK: - PHASES
+    func setupCurrentPhase() {
+        let currentPhase = cubePhases[currentPhaseIndex]
+        // cor de fundo da cena
+        //sceneView.backgroundColor = currentPhase.backgroundColor
+        
+        // titulo
+    }
+    
+    func moveToNextPhase() {
+        currentPhaseIndex += 1
+        if currentPhaseIndex < cubePhases.count {
+            setupCurrentPhase()
+            // setuplights for phase tal
+        } else {
+            // ACABOU
+            print("cabou")
+        }
+    }
+    
+    func checkIfFinishedPhase() {
+        if numOfMovements == 1 { // ou numero necessario para passar para proxima fase
+            moveToNextPhase()
+            //numOfMovements = 0
+        }
     }
     
     // MARK: - SCENE
@@ -49,6 +77,13 @@ class ViewController: UIViewController, ObservableObject{
         sceneView.showsStatistics = true
         self.view.addSubview(sceneView)
         rootNode = sceneView.scene!.rootNode
+        
+        cubePhases = [
+            PhaseModel(phaseNumber: 1, title: "Clareca amoreca", backgroundColor: .blue),
+            PhaseModel(phaseNumber: 2, title: "sr panday sdds", backgroundColor: .purple)
+        ]
+
+        //setupCurrentPhase()
     }
 
     // MARK: - CUBE
@@ -327,6 +362,7 @@ class ViewController: UIViewController, ObservableObject{
                     self.rubiksCube.addChildNode(node)
                 }
                 self.numOfMovements += 1
+                self.checkIfFinishedPhase()
                 print("\n\nLADO NORTE RESOLVIDO: \(self.rubiksCube.isNorthWallSolved())")
                 //print("CHILDNODE\(self.rubiksCube.childNodes.debugDescription)")
                 print("\nROTACAO ANGULO: \(rotationAngle) / ROTACAOaxis: \(self.rotationAxis!)")

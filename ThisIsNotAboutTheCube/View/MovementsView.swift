@@ -14,7 +14,11 @@ struct CubeView: UIViewControllerRepresentable {
         return viewController
     }
 
-    func updateUIViewController(_ uiViewController: ViewController, context: Context) {}
+    func updateUIViewController(_ uiViewController: ViewController, context: Context) {
+        //uiViewController.cubePhases = viewController.cubePhases
+        //uiViewController.currentPhaseIndex = viewController.currentPhaseIndex
+        //uiViewController.numOfMovements = viewController.numOfMovements
+    }
 }
 
 struct MovementsView: View {
@@ -25,13 +29,20 @@ struct MovementsView: View {
     var body: some View {
         
         ZStack(alignment: .top) {
-            Color.purple.ignoresSafeArea()
+            
+            withAnimation(.easeInOut) {
             CubeView(viewController: vc)
+                .background(vc.cubePhases.isEmpty ? Color.red: vc.cubePhases[vc.currentPhaseIndex].backgroundColor)
+            }
+
             VStack {
-                Text("\(vc.numOfMovements)")
+                Text("\(vc.cubePhases.isEmpty ? "empty" : vc.cubePhases[vc.currentPhaseIndex].title)")
                     .font(.system(size: 100))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.black)
                 
+                Text("\(vc.numOfMovements)")
+                    .font(.system(size: 50))
+                    .foregroundStyle(.black)
             }
             
         }
