@@ -12,7 +12,17 @@ import SceneKit
 struct PhaseModel {
     var phaseNumber: Int
     var title: String
+    var actionLabel: String
     var backgroundColor: Color
+    var movementsRequired: Int
+    
+    init(phaseNumber: Int, title: String, actionLabel: String, backgroundColor: Color, movementsRequired: Int) {
+        self.phaseNumber = phaseNumber
+        self.title = title
+        self.actionLabel = actionLabel
+        self.backgroundColor = backgroundColor
+        self.movementsRequired = movementsRequired
+    }
     //var lightning: SCNLight
     // texture
 }

@@ -60,9 +60,10 @@ class ViewController: UIViewController, ObservableObject {
     }
     
     func checkIfFinishedPhase() {
-        if numOfMovements == 1 { // ou numero necessario para passar para proxima fase
+        let requiredMovements = cubePhases[currentPhaseIndex].movementsRequired
+        if numOfMovements == requiredMovements { // ou numero necessario para passar para proxima fase
             moveToNextPhase()
-            //numOfMovements = 0
+            numOfMovements = 0
         }
     }
     
@@ -79,8 +80,9 @@ class ViewController: UIViewController, ObservableObject {
         rootNode = sceneView.scene!.rootNode
         
         cubePhases = [
-            PhaseModel(phaseNumber: 1, title: "Clareca amoreca", backgroundColor: .blue),
-            PhaseModel(phaseNumber: 2, title: "sr panday sdds", backgroundColor: .purple)
+            PhaseModel(phaseNumber: 1, title: "Clareca amoreca", actionLabel: "ACAO1", backgroundColor: .blue, movementsRequired: 3),
+            PhaseModel(phaseNumber: 2, title: "sr panday sdds", actionLabel: "ACAO2", backgroundColor: .purple, movementsRequired: 5),
+            PhaseModel(phaseNumber: 3, title: "3 FASE", actionLabel: "ACAO3", backgroundColor: .red, movementsRequired: 5),
         ]
 
         //setupCurrentPhase()
@@ -121,7 +123,7 @@ class ViewController: UIViewController, ObservableObject {
         let sphereGeometry = SCNSphere(radius: 0.1)
         let sphereNode = SCNNode(geometry: sphereGeometry)
         let orangeMaterial = SCNMaterial()
-        orangeMaterial.diffuse.contents = UIColor.orange
+        orangeMaterial.diffuse.contents = UIColor.clear
         sphereGeometry.materials = [orangeMaterial]
         sphereNode.position = SCNVector3(0, 1.5, -5)
         cameraNode.addChildNode(sphereNode)
