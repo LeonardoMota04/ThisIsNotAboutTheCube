@@ -29,13 +29,16 @@ class ViewController: UIViewController, ObservableObject {
     var animationLock = false
     var shouldFloat = true
 
+    var edgeDistance975 : Float = 0.975
+    var tolerance25: Float = 0.025
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupScene()
         createRubiksCube()
         setupFloatingAnimation()
         setupCamera()
-        setupLights()
+        //setupLights()
         setupGestureRecognizers()
     }
     
@@ -81,7 +84,7 @@ class ViewController: UIViewController, ObservableObject {
         
         cubePhases = [
             PhaseModel(phaseNumber: 1, title: "Clareca amoreca", actionLabel: "ACAO1", backgroundColor: .blue, movementsRequired: 3),
-            PhaseModel(phaseNumber: 2, title: "sr panday sdds", actionLabel: "ACAO2", backgroundColor: .purple, movementsRequired: 5),
+            PhaseModel(phaseNumber: 2, title: "sr panday sdds", actionLabel: "ACAO2", backgroundColor: .black, movementsRequired: 5),
             PhaseModel(phaseNumber: 3, title: "3 FASE", actionLabel: "ACAO3", backgroundColor: .red, movementsRequired: 5),
         ]
 
@@ -225,7 +228,7 @@ class ViewController: UIViewController, ObservableObject {
             
             // LADO TOCADO
             var side:CubeSide!
-            side = selectedCubeSide(hitResult: beganPanHitResult, edgeDistanceFromOrigin: 0.975)
+            side = selectedCubeSide(hitResult: beganPanHitResult, edgeDistanceFromOrigin: edgeDistance975) //1.475)
             
 
             
@@ -309,7 +312,7 @@ class ViewController: UIViewController, ObservableObject {
                 if ((side == CubeSide.right || side == CubeSide.left) && plane == "Z")
                     || ((side == CubeSide.front || side == CubeSide.back) && plane == "X") {
                         self.rotationAxis = SCNVector3(0,1,0) // Y
-                    return child.position.y.nearlyEqual(b: self.beganPanNode.position.y, tolerance: 0.025)
+                    return child.position.y.nearlyEqual(b: self.beganPanNode.position.y, tolerance: tolerance25)
                 }
                 
                 
@@ -317,7 +320,7 @@ class ViewController: UIViewController, ObservableObject {
                 if ((side == CubeSide.right || side == CubeSide.left) && plane == "Y")
                     || ((side == CubeSide.up || side == CubeSide.down) && plane == "X") {
                         self.rotationAxis = SCNVector3(0,0,1) // Z
-                        return child.position.z.nearlyEqual(b: self.beganPanNode.position.z, tolerance: 0.025)
+                        return child.position.z.nearlyEqual(b: self.beganPanNode.position.z, tolerance: tolerance25)
                 }
                 
                 
@@ -325,7 +328,7 @@ class ViewController: UIViewController, ObservableObject {
                 if ((side == CubeSide.front || side == CubeSide.back) && plane == "Y")
                     || ((side == CubeSide.up || side == CubeSide.down) && plane == "Z") {
                         self.rotationAxis = SCNVector3(1,0,0) // X
-                        return child.position.x.nearlyEqual(b: self.beganPanNode.position.x, tolerance: 0.025)
+                        return child.position.x.nearlyEqual(b: self.beganPanNode.position.x, tolerance: tolerance25)
                 }
                 
                 
@@ -349,10 +352,6 @@ class ViewController: UIViewController, ObservableObject {
             // create action
             let rotationAngle = CGFloat(direction) * .pi/2;
             let rotation_Action = SCNAction.rotate(by: rotationAngle, around: self.rotationAxis, duration: 0.2)
-            
-            let rotatedSide = selectedCubeSide(hitResult: beganPanHitResult, edgeDistanceFromOrigin: 0.975)
-            let moveNotation = convertToMoveNotation(rotatedSide: rotatedSide, plane: plane, direction: direction)
-           
 
 
             // TIRANDO NODES DO CONTAINER
@@ -371,7 +370,6 @@ class ViewController: UIViewController, ObservableObject {
                 print("lado: \(side!)")
                 print("plano: \(plane)")
                 print("direction: \(direction)")
-                print("Move Notation: \(moveNotation)")
                 print("NUM DE MOVIMENTOS: \(self.numOfMovements)")
                 self.animationLock = false
                 self.animationLock = false
@@ -379,78 +377,30 @@ class ViewController: UIViewController, ObservableObject {
             })
         }
     }
-    
-    func convertToMoveNotation(rotatedSide: CubeSide, plane: String, direction: Int) -> String {
-        let sideNotation: String
-        let directionNotation: String
-
-        // Identificar o lado rotacionado
-        let rotatedSideNotation: String
-        switch rotatedSide {
-        case .up:
-            rotatedSideNotation = "U"
-        case .down:
-            rotatedSideNotation = "D"
-        case .right:
-            rotatedSideNotation = "R"
-        case .left:
-            rotatedSideNotation = "L"
-        case .front:
-            rotatedSideNotation = "F"
-        case .back:
-            rotatedSideNotation = "B"
-        case .none:
-            rotatedSideNotation = ""
-        }
-
-        // Identificar o lado tocado (o lado oposto ao rotacionado)
-        switch plane {
-        case "X":
-            sideNotation = direction > 0 ? "U" : "D"
-        case "Y":
-            sideNotation = direction > 0 ? "R" : "L"
-        case "Z":
-            sideNotation = direction > 0 ? "F" : "B"
-        default:
-            sideNotation = ""
-        }
-
-        // Identificar a direção da rotação
-        directionNotation = direction < 0 ? "'" : ""
-
-        // Se o lado rotacionado for diferente do lado tocado, então adicione a notação do lado rotacionado
-        if rotatedSideNotation != sideNotation {
-            return rotatedSideNotation + directionNotation
-        }
-
-        // Caso contrário, retorne a notação do lado tocado
-        return sideNotation + directionNotation
-    }
-
-    
+  
     private func selectedCubeSide(hitResult: SCNHitTestResult, edgeDistanceFromOrigin:Float) -> CubeSide {
         
         // X
-        if beganPanHitResult.worldCoordinates.x.nearlyEqual(b: edgeDistanceFromOrigin, tolerance: 0.025) {
+        if beganPanHitResult.worldCoordinates.x.nearlyEqual(b: edgeDistanceFromOrigin, tolerance: tolerance25) {
             return .right
         }
-        else if beganPanHitResult.worldCoordinates.x.nearlyEqual(b: -edgeDistanceFromOrigin, tolerance: 0.025) {
+        else if beganPanHitResult.worldCoordinates.x.nearlyEqual(b: -edgeDistanceFromOrigin, tolerance: tolerance25) {
             return .left
         }
         
         // Y
-        else if beganPanHitResult.worldCoordinates.y.nearlyEqual(b: edgeDistanceFromOrigin, tolerance: 0.025) {
+        else if beganPanHitResult.worldCoordinates.y.nearlyEqual(b: edgeDistanceFromOrigin, tolerance: tolerance25) {
             return .up
         }
-        else if beganPanHitResult.worldCoordinates.y.nearlyEqual(b: -edgeDistanceFromOrigin, tolerance: 0.025) {
+        else if beganPanHitResult.worldCoordinates.y.nearlyEqual(b: -edgeDistanceFromOrigin, tolerance: tolerance25) {
             return .down
         }
         
         // Z
-        else if beganPanHitResult.worldCoordinates.z.nearlyEqual(b: edgeDistanceFromOrigin, tolerance: 0.025) {
+        else if beganPanHitResult.worldCoordinates.z.nearlyEqual(b: edgeDistanceFromOrigin, tolerance: tolerance25) {
             return .front
         }
-        else if beganPanHitResult.worldCoordinates.z.nearlyEqual(b: -edgeDistanceFromOrigin, tolerance: 0.025) {
+        else if beganPanHitResult.worldCoordinates.z.nearlyEqual(b: -edgeDistanceFromOrigin, tolerance: tolerance25) {
             return .back
         }
         return .none

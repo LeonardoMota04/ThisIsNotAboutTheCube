@@ -30,7 +30,8 @@ struct SwiftUIView: View {
     @State private var titleLabel: String = ""
     @State private var actionLabel: String = ""
     @State private var textOpacity: Double = 1.0
-
+    @State private var lineOffset: CGFloat = 0.0
+    
     var body: some View {
         
         ZStack(alignment: .top) {
@@ -54,6 +55,9 @@ struct SwiftUIView: View {
                 
                 Spacer()
                 
+                LinesView()
+                    .offset(y: lineOffset)
+                
                 /// Action Label
                 Text(actionLabel)
                     .font(.system(size: 50))
@@ -71,6 +75,11 @@ struct SwiftUIView: View {
         
         .onChange(of: vc.currentPhaseIndex) { _ , _ in
             
+            withAnimation(.smooth){
+                lineOffset -= 100
+            }
+
+            
             withAnimation(.easeIn(duration: 1.0)) {
                 cubeBackgroundColor = vc.cubePhases.isEmpty ? Color.gray : vc.cubePhases[vc.currentPhaseIndex].backgroundColor
                 
@@ -81,7 +90,7 @@ struct SwiftUIView: View {
             }
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                withAnimation(.linear(duration: 2.0)) {
+                withAnimation(.smooth(duration: 2.0)) {
                     titleLabel = vc.cubePhases.isEmpty ? "empty" : vc.cubePhases[vc.currentPhaseIndex].title
                     
                     actionLabel = vc.cubePhases.isEmpty ? "empty" : vc.cubePhases[vc.currentPhaseIndex].actionLabel
@@ -99,3 +108,64 @@ struct SwiftUIView: View {
 #Preview {
     SwiftUIView()
 }
+
+
+struct ContentView: View {
+    @State private var showNextView = false
+    
+    var body: some View {
+        VStack {
+            Spacer()
+            
+            if showNextView {
+                NextView()
+                    .transition(.slide)
+            } else {
+                LinesView()
+                    .transition(.slide)
+            }
+            
+            Spacer()
+            
+            Button("Next") {
+                withAnimation {
+                    showNextView.toggle()
+                }
+            }
+        }
+        .padding()
+    }
+}
+
+struct LinesView: View {
+    var body: some View {
+        VStack(spacing: 20) {
+            LineView()
+            LineView()
+            LineView()
+        }
+    }
+}
+
+struct LineView: View {
+    var body: some View {
+        Rectangle()
+            .frame(height: 5)
+            .foregroundColor(.white)
+    }
+}
+
+struct NextView: View {
+    var body: some View {
+        Text("Next View")
+            .font(.title)
+            .foregroundColor(.green)
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
+

@@ -22,8 +22,8 @@ enum CubeSide {
 
 class RubiksCube: SCNNode {
     
-    let cubeWidth:CGFloat = 1
-    //let spaceBetweenCubes:Float = 0.05
+    var cubeWidth: CGFloat = 1
+    var spaceBetweenCubes:Float = 0.0
     let colors:[UIColor] = [.orange, .green, .red, .blue, .yellow, .white]
 
     required init?(coder: NSCoder) {
@@ -94,16 +94,16 @@ class RubiksCube: SCNNode {
                     
                     let cube = SCNNode(geometry: cubeGeometry)
                     cube.position = SCNVector3(x: xPos, y: yPos, z: zPos)
-                    xPos += Float(cubeWidth) //+ spaceBetweenCubes
+                    xPos += Float(cubeWidth) + spaceBetweenCubes
                     
                     self.addChildNode(cube)
                 }
                 xPos = -cubeOffsetDistance
-                yPos += Float(cubeWidth) //+ spaceBetweenCubes
+                yPos += Float(cubeWidth) + spaceBetweenCubes
             }
             xPos = -cubeOffsetDistance
             yPos = -cubeOffsetDistance
-            zPos += Float(cubeWidth) //+ spaceBetweenCubes
+            zPos += Float(cubeWidth) + spaceBetweenCubes
         }
     }
     

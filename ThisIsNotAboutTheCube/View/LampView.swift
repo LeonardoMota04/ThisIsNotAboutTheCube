@@ -39,7 +39,7 @@ struct LampView: View {
             
                 
         }
-        //.saturation(0)
+        .saturation(0)
         
     }
     // GERA VALORES ALEATORIOS PARA EFEITO DE LUZ PISCANDO
