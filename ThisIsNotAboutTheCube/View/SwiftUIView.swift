@@ -24,21 +24,40 @@ struct CubeView: UIViewControllerRepresentable {
 struct SwiftUIView: View {
     
     @ObservedObject private var vc = ViewController()
-    
+    let screen = UIScreen()
     @State private var cubeBackgroundColor: Color = .clear
-    @State var numOfMovement: Int = 0
     @State private var titleLabel: String = ""
     @State private var actionLabel: String = ""
     @State private var textOpacity: Double = 1.0
     @State private var lineOffset: CGFloat = 0.0
+    @State private var imageScale: CGFloat = 0.5
+    @State private var lightOpacity: Double = 0.0
     
     var body: some View {
         
         ZStack(alignment: .top) {
+            Color.black.ignoresSafeArea()
             
             // CUBE
             CubeView(viewController: vc)
-                .background(cubeBackgroundColor)
+                .background(
+                    Image(uiImage: .fundo0)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width)
+                        .scaleEffect(imageScale) // initial scale
+                        
+                        .onAppear {
+                            //DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                                withAnimation(.linear(duration: 8.0)){
+                                    imageScale = 5.0
+                    
+                                }
+                            //}
+                            
+                        }
+                )
+            
 
             // INFORMATION
             VStack {
@@ -57,6 +76,7 @@ struct SwiftUIView: View {
                 
                 LinesView()
                     .offset(y: lineOffset)
+                    .opacity(0)
                 
                 /// Action Label
                 Text(actionLabel)
@@ -71,14 +91,23 @@ struct SwiftUIView: View {
             cubeBackgroundColor = vc.cubePhases.isEmpty ? .gray : vc.cubePhases[vc.currentPhaseIndex].backgroundColor
             titleLabel = vc.cubePhases.isEmpty ? "empty" : vc.cubePhases[vc.currentPhaseIndex].title
             actionLabel = vc.cubePhases.isEmpty ? "empty" : vc.cubePhases[vc.currentPhaseIndex].actionLabel
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 8.0) {
+                withAnimation(.smooth(duration: 2.0)) {
+                    lightOpacity = 0.3
+                }
+
+            }
         }
         
         .onChange(of: vc.currentPhaseIndex) { _ , _ in
             
+            
+            
             withAnimation(.smooth){
                 lineOffset -= 100
             }
-
+            
             
             withAnimation(.easeIn(duration: 1.0)) {
                 cubeBackgroundColor = vc.cubePhases.isEmpty ? Color.gray : vc.cubePhases[vc.currentPhaseIndex].backgroundColor
@@ -163,9 +192,4 @@ struct NextView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
 

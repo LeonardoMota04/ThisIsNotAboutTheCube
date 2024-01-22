@@ -38,6 +38,7 @@ class ViewController: UIViewController, ObservableObject {
         createRubiksCube()
         setupFloatingAnimation()
         setupCamera()
+        setupCurrentPhase()
         //setupLights()
         setupGestureRecognizers()
     }
@@ -45,9 +46,30 @@ class ViewController: UIViewController, ObservableObject {
     // MARK: - PHASES
     func setupCurrentPhase() {
         let currentPhase = cubePhases[currentPhaseIndex]
-        // cor de fundo da cena
         //sceneView.backgroundColor = currentPhase.backgroundColor
         
+        
+        switch currentPhase.phaseNumber {
+            case 0:
+                print("fase 0")
+                setupLights()
+            case 1:
+                print("fase 1")
+                self.rubiksCube.changeCubeTexture()
+            case 2:
+                print("fase 2")
+            case 3:
+                print("fase 3")
+            case 4:
+                print("fase 4")
+            case 5:
+                print("fase 5")
+            default:
+                print("fase fora")
+            
+        }
+       
+            
         // titulo
     }
     
@@ -78,11 +100,14 @@ class ViewController: UIViewController, ObservableObject {
         sceneView = SCNView(frame: self.view.frame)
         sceneView.scene = SCNScene()
         sceneView.backgroundColor = .clear
+        
+        
         sceneView.showsStatistics = true
         self.view.addSubview(sceneView)
         rootNode = sceneView.scene!.rootNode
-        
+    
         cubePhases = [
+            PhaseModel(phaseNumber: 0, title: "", actionLabel: "", backgroundColor: .black, movementsRequired: 10),
             PhaseModel(phaseNumber: 1, title: "Clareca amoreca", actionLabel: "ACAO1", backgroundColor: .blue, movementsRequired: 3),
             PhaseModel(phaseNumber: 2, title: "sr panday sdds", actionLabel: "ACAO2", backgroundColor: .black, movementsRequired: 5),
             PhaseModel(phaseNumber: 3, title: "3 FASE", actionLabel: "ACAO3", backgroundColor: .red, movementsRequired: 5),
@@ -117,7 +142,19 @@ class ViewController: UIViewController, ObservableObject {
         rootNode.addChildNode(cameraNode)
 
         cameraNode.position = SCNVector3Make(0, 0, 0)
-        cameraNode.pivot = SCNMatrix4MakeTranslation(0, 0, -10)
+        cameraNode.pivot = SCNMatrix4MakeTranslation(0, 0, -80) // camera initial position
+        cameraNode.eulerAngles = SCNVector3(0, 0, 0)
+
+        //DispatchQueue.main.asyncAfter(deadline: .now() + 8.0) {
+            SCNTransaction.begin()
+            SCNTransaction.animationDuration = 8.0
+            self.cameraNode.pivot = SCNMatrix4MakeTranslation(0, 0, -10)
+            self.cameraNode.eulerAngles = SCNVector3(-0.5, 0.75, 0)
+            SCNTransaction.commit()
+        //}
+        
+        
+        
     }
 
     // MARK: - LIGHTS
@@ -363,10 +400,10 @@ class ViewController: UIViewController, ObservableObject {
                     self.rubiksCube.addChildNode(node)
                 }
                 self.numOfMovements += 1
+                //self.rubiksCube.changeCubeTexture()
                 self.checkIfFinishedPhase()
                 print("\n\nLADO NORTE RESOLVIDO: \(self.rubiksCube.isNorthWallSolved())")
-                //print("CHILDNODE\(self.rubiksCube.childNodes.debugDescription)")
-                print("\nROTACAO ANGULO: \(rotationAngle) / ROTACAOaxis: \(self.rotationAxis!)")
+                print("ROTACAO ANGULO: \(rotationAngle) / ROTACAOaxis: \(self.rotationAxis!)")
                 print("lado: \(side!)")
                 print("plano: \(plane)")
                 print("direction: \(direction)")

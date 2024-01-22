@@ -16,31 +16,23 @@ struct LampView: View {
     
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
-            
-            ZStack {
-                // Luz em forma de triângulo
-                    LinearGradient(
-                        gradient: Gradient(colors: [.white, .clear]),
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .mask(TriangleMask())
-                    .opacity(randomOpacity)
-                    .onAppear {
-                        withAnimation(.easeInOut(duration: 0.5).repeatForever()) {
-                            updateRandomOpacity()
-                            isLightFlashing.toggle()
-                        }
+            // Luz em forma de triângulo
+                LinearGradient(
+                    gradient: Gradient(colors: [.white, .clear]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .mask(TriangleMask())
+                .opacity(randomOpacity)
+                .onAppear {
+                    withAnimation(.easeInOut(duration: 0.5).repeatForever()) {
+                        updateRandomOpacity()
+                        isLightFlashing.toggle()
                     }
-                    .ignoresSafeArea()
-                CubeView(viewController: vc)
-            }
-            
-                
+                }
+                .ignoresSafeArea()
         }
         .saturation(0)
-        
     }
     // GERA VALORES ALEATORIOS PARA EFEITO DE LUZ PISCANDO
     private func updateRandomOpacity() {
